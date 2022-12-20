@@ -8,15 +8,18 @@ This is a simple geth/clef host that can be used by a testnet that mines using t
 
 Testnets don't have scale which creates the risk of the network being spammed or interrupted by other means by jerks.  A way around this problem is to create a private network where trusted participants are approved to validate transaction blocks using the clique "proof of authority" (POA) protocol.  The clique POA protocol defines this process as "sealing" transactions.  To seal transactions, a node of an approved miner has to have a secret key available on the node. As this secret key (with its corresponding public "wallet" address) accumulates the transaction fees of the blocks it seals, the key is also required to be available to the node owner in a tool such as metamask so that they can transfer these tokens to others who want to use the testnet.  And so problem #1 we are trying to solve is the process of creating and sharing a key between signing nodes, and the owner who controls them.
 
-Nodes need access to keys to seal transactions, however the problem is that the node software process is by necessity exposed to public queries, including those from jerks.  This means that if the node is poorly configured, compromised through its application interface, or if its host container account is accessed, the node software becomes a risk for secret key compromise if it has direct access to signing keys.  And so problem #2 we are trying to solve is the management of the secret key on the node used to seal transactions so that it is not at risk of disclosure or misuse if the ethereum node software gets pwned.
+Nodes need access to keys to seal transactions, however the problem is that the node software process is by necessity exposed to public queries, including those from jerks.  This means that if the node is poorly configured, compromised through its application interface, or if its host container account is compromised, the node software becomes a risk for secret key access if it has direct access to signing keys.  And so problem #2 we are trying to solve is the management of the secret key on the node used to seal transactions so that it is not at risk of disclosure or misuse if the ethereum node software gets pwned.
 
 ## The Solutions
 
-The solutions provided in the note are based on geth and clef and are installed on Debian linux using the provided Host Standard Operating Model.
+The solutions provided in the note are based on geth and clef and are installed on Debian linux using the Host Standard Operating Model.
 
 ### Overview
-* The solution to problem #1 is this document that shows the bash foo required to independantly create a random key and install it into both a geth keystore for use by clef, and metamask for use by a human.
+
+* The solution to problem #1 is this document which shows the bash foo required to independantly create a random key and install it into both a geth keystore for use by clef, and metamask for use by a human.
 * The solution to problem #2 is the clef-host program provided in this repository.  In simple terms this program runs an ethereum geth node application as a client of the clef external signing application.  This is a tad involved - clef and geth have to run in separate host user accounts with the geth node open to requests through the firewall, and the clef node not open to any requests other than via a shared pipe with geth.  clef requires a user entered password on startup from some form of GUI, and so we have to create a host program feature that acts as a gui for clef to provide the password on startup.  And as clef has to start before geth, we have to manage the process in order.  
+
+### The bash Foo
 
 
 
